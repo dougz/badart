@@ -110,7 +110,7 @@ class GameState:
 
     await self.team.send_messages([{"method": "show_message",
                                     "text": "The gallery is opening\u2026"}])
-    await asyncio.sleep(3.0)
+    await asyncio.sleep(1.5)
 
     now = time.time()
     close_time = now + self.INITIAL_OPENING_TIME
