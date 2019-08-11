@@ -1,0 +1,100 @@
+#puzz {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+}
+
+#puzz div#top {
+    height: 96px;
+    background-color: #ffeedd;
+    margin: 0 0 40px 0;
+    padding: 16px;
+}
+
+#puzz div#identify {
+    float: right;
+}
+
+#puzz div#chat p {
+    font-size: 16px;
+    margin: 4px 0 0 0;
+}
+
+#puzz span#countdown {
+    font-weight: bold;
+}
+
+#puzz div#message {
+    display: none;
+    padding: 100px;
+    color: #666;
+    font-size: 200%;
+    font-weight: bold;
+    text-align: center;
+}
+
+#puzz div#gallery {
+    display: none;
+    align-self: center;
+}
+
+#puzz img#art {
+    display: block;
+    border:solid 30px;
+    border-bottom-color:#f8f8f8;
+    border-left-color:#eee;
+    border-right-color:#eee;
+    border-top-color:#d8d8d8;
+    background-color:#ddc;
+    padding: 30px;
+    border-radius:2px;
+    box-shadow:0 0 5px 0 rgba(0,0,0,.25) inset, 0 5px 10px 5px rgba(0,0,0,.25);
+    box-sizing:border-box;
+}
+
+#puzz div#caption {
+    display: none;
+    flex-direction: column;
+    align-items: flex-end;
+    margin-top: 40px;
+}
+
+#puzz div#caption p {
+    margin: 0 0 0.5em 0;
+    text-align: right;
+}
+
+#puzz #titleline {
+    font-size: 120%;
+    max-width: 400px;
+}
+
+#puzz span#title {
+    font-weight: bold;
+}
+
+#puzz div#entry {
+    display: none;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-top: 40px;
+    text-align: center;
+    min-height: 90px;
+}
+
+#puzz input#text {
+    font-size: 144%;
+    width: 600px;
+}
+
+#puzz button#artsubmit {
+    margin-left: 8px;
+    padding: 0 8px;
+    font-size: 144%;
+}
+
+#puzz img#preload {
+    display: none;
+}

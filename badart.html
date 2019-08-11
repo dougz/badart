@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel=stylesheet href="/artdebug/badart.css" />
+    <script src="/closure/goog/base.js"></script>
+    <script src="/artdebug/badart.js"></script>
+  </head>
+  <body onload="initPage()" id="puzz">
+    <div id=top>
+      <div id=identify>
+	Enter your name: <input type=text id=who maxlength="30"></input><br/><br/>
+	<span id=countdown></span>
+      </div>
+      <div id=chat>
+	<p></p><p></p><p></p><p></p>
+      </div>
+    </div>
+    <div id=message></div>
+    <div id=gallery>
+      <img id=art></img>
+      <div id=caption>
+	<p>L. Out (b. 2005)</p>
+	<p id=titleline><span id=title></span>, 2020</p>
+	<p>Pixels on tablet</p>
+      </div>
+    </div>
+    <div id=entry>
+      <input type=text id=text maxlength="80"></input>
+      <button id=artsubmit>Submit</button>
+    </div>
+    <img id=preload></img>
+  </body>
+</html>
