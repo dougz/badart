@@ -1,0 +1,15 @@
+shortname: bad_art
+title: Bad Art
+answer: FINGERPAINTS
+
+author:
+  - Jan Chong
+  - Doug Zongker
+
+oncall: dougz@isotropic.org
+puzzletron_id: 136
+
+obfuscate_assets: true
+
+
+

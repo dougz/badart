@@ -39,18 +39,22 @@
     align-self: center;
 }
 
-#puzz img#art {
+#puzz img {
     display: block;
-    border:solid 30px;
-    border-bottom-color:#f8f8f8;
-    border-left-color:#eee;
-    border-right-color:#eee;
-    border-top-color:#d8d8d8;
-    background-color:#ddc;
-    padding: 30px;
-    border-radius:2px;
-    box-shadow:0 0 5px 0 rgba(0,0,0,.25) inset, 0 5px 10px 5px rgba(0,0,0,.25);
+    padding: 60px;
     box-sizing:border-box;
+}
+
+#puzz img.framed {
+    padding: 30px;
+    border: solid 30px;
+    border-bottom-color: #f8f8f8;
+    border-left-color: #eee;
+    border-right-color: #eee;
+    border-top-color: #d8d8d8;
+    background-color: #ddc;
+    border-radius: 2px;
+    box-shadow: 0 0 5px 0 rgba(0,0,0,.25) inset, 0 5px 10px 5px rgba(0,0,0,.25);
 }
 
 #puzz div#caption {

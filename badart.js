@@ -1,4 +1,5 @@
 goog.require('goog.dom');
+goog.require('goog.dom.classlist');
 goog.require('goog.dom.TagName');
 goog.require('goog.events');
 goog.require('goog.events.KeyCodes');
@@ -16,7 +17,7 @@ class BadArtWaiter {
 	/** @type{number} */
 	this.backoff = 100;
 
-	/** @type(Dispatcher) */
+	/** @type{BadArtDispatcher} */
 	this.dispatcher = dispatcher;
     }
 
@@ -41,7 +42,7 @@ class BadArtWaiter {
 
         this.backoff = 100;
 
-	var msgs = /** @type{Array<Message>} */ (this.xhr.getResponseJson());
+	var msgs = /** @type{Array<Array<Message|number>>} */ (this.xhr.getResponseJson());
 	for (var i = 0; i < msgs.length; ++i) {
 	    this.serial = /** @type{number} */ (msgs[i][0]);
 	    var msg = /** @type{Message} */ (msgs[i][1]);
@@ -129,11 +130,13 @@ class BadArtDispatcher {
 	badart.gallery.style.display = "block";
 	badart.message.style.display = "none";
 	if (msg.title) {
+	    goog.dom.classlist.add(badart.art, "framed");
 	    badart.caption.style.display = "flex";
 	    badart.entry.style.display = "none";
 	    badart.title.innerHTML = msg.title;
 	    badart.text.value = "";
 	} else {
+	    goog.dom.classlist.remove(badart.art, "framed");
 	    badart.caption.style.display = "none";
 	    badart.entry.style.display = "flex";
 	    if (document.activeElement.tagName != "INPUT") badart.text.focus();
@@ -145,8 +148,10 @@ class BadArtDispatcher {
 
     /** @param{Message} msg */
     play_audio(msg) {
-	var audio = new Audio(msg.url);
-	audio.play();
+	if (msg.url) {
+	    var audio = new Audio(msg.url);
+	    audio.play();
+	}
     }
 
     /** @param{Message} msg */
@@ -165,6 +170,7 @@ function badart_submit(e) {
     if (answer == "") return;
     badart.text.value = "";
     var username = badart.who.value;
+    localStorage.setItem("name", username);
     var msg = badart.serializer.serialize({"answer": answer, "who": username});
     goog.net.XhrIo.send("/artsubmit", function(e) {
 	var code = e.target.getStatus();
@@ -211,6 +217,7 @@ puzzle_init = function() {
     badart.text = goog.dom.getElement("text");
     badart.title = goog.dom.getElement("title");
     badart.who = goog.dom.getElement("who");
+    badart.who.value = localStorage.getItem("name");
     badart.chat = goog.dom.getElement("chat");
     badart.message = goog.dom.getElement("message");
     badart.countdown_span = goog.dom.getElement("countdown");

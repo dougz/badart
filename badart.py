@@ -2,20 +2,13 @@
 
 import argparse
 import asyncio
-import itertools
-import io
-import asyncio
 import json
 import os
-import pprint
 import time
 import unicodedata
 
 import http.client
-import tornado.ioloop
 import tornado.web
-import tornado.netutil
-import tornado.httpserver
 
 import scrum
 

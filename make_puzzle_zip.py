@@ -1,28 +1,51 @@
 #!/usr/bin/python3
 
+import argparse
 import os
 import zipfile
+
+parser = argparse.ArgumentParser()
+parser.add_argument("--debug", action="store_true")
+options = parser.parse_args()
 
 with zipfile.ZipFile("badart.zip", mode="w") as z:
   with z.open("puzzle.html", "w") as f_out:
     with open("badart.html", "rb") as f_in:
-      f_out.write(f_in.read())
+
+      html = f_in.read()
+
+      if options.debug:
+        head = ('<link rel=stylesheet href="/artdebug/badart.css" />'
+                '<script src="/closure/goog/base.js"></script>'
+                '<script src="/artdebug/badart.js"></script>')
+      else:
+        head = ('<link rel=stylesheet href="badart.css" />'
+                '<script src="badart-compiled.js"></script>')
+
+      html = html.replace(b"@HEAD@", head.encode("utf-8"))
+
+      f_out.write(html)
 
   with z.open("solution.html", "w") as f_out:
     with open("solution.html", "rb") as f_in:
       f_out.write(f_in.read())
 
-  with z.open("metadata.cfg", "w") as f_out:
-    with open("metadata.cfg", "rb") as f_in:
+  with z.open("for_ops.html", "w") as f_out:
+    with open("for_ops.html", "rb") as f_in:
       f_out.write(f_in.read())
 
-  with z.open("badart.css", "w") as f_out:
-    with open("badart.css", "rb") as f_in:
+  with z.open("metadata.yaml", "w") as f_out:
+    with open("metadata.yaml", "rb") as f_in:
       f_out.write(f_in.read())
 
-  with z.open("badart.js", "w") as f_out:
-    with open("badart.js", "rb") as f_in:
-      f_out.write(f_in.read())
+  if not options.debug:
+    with z.open("badart.css", "w") as f_out:
+      with open("badart.css", "rb") as f_in:
+        f_out.write(f_in.read())
+
+    with z.open("badart-compiled.js", "w") as f_out:
+      with open("badart-compiled.js", "rb") as f_in:
+        f_out.write(f_in.read())
 
   with z.open("tada.wav", "w") as f_out:
     with open("tada.wav", "rb") as f_in:
