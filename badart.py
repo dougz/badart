@@ -308,14 +308,16 @@ def make_app(options):
   handlers = [
     (r"/artsubmit", SubmitHandler),
     (r"/artopen", OpenHandler),
-    (r"/artdebug/(\S+)", DebugHandler),
   ]
-
+  if options.debug:
+    handlers.append((r"/artdebug/(\S+)", DebugHandler))
   return handlers
 
 
 def main():
   parser = argparse.ArgumentParser(description="Run the bad art puzzle.")
+  parser.add_argument("--debug", action="store_true",
+                      help="Run in debug mode.")
   parser.add_argument("--assets_json", default=None,
                       help="JSON file for image assets")
   parser.add_argument("-c", "--cookie_secret",
