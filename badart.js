@@ -90,6 +90,7 @@ class BadArtDispatcher {
     constructor() {
 	this.methods = {
 	    "show_message": this.show_message,
+	    "prompt_open": this.prompt_open,
 	    "show_image": this.show_image,
 	    "play_audio": this.play_audio,
 	    "add_chat": this.add_chat,
@@ -117,6 +118,15 @@ class BadArtDispatcher {
     }
 
     /** @param{Message} msg */
+    prompt_open(msg) {
+	badart.open.style.display = "inline";
+	badart.gallery.style.display = "none";
+	badart.entry.style.display = "none";
+	badart.message.style.display = "block";
+	badart.message.innerHTML = msg.text;
+    }
+
+    /** @param{Message} msg */
     show_image(msg) {
 	if (msg.end_time) {
 	    if (badart.countdown == null) {
@@ -129,6 +139,7 @@ class BadArtDispatcher {
 	}
 	badart.gallery.style.display = "block";
 	badart.message.style.display = "none";
+	badart.open.style.display = "none";
 	if (msg.title) {
 	    goog.dom.classlist.add(badart.art, "framed");
 	    badart.caption.style.display = "flex";
@@ -188,9 +199,11 @@ function badart_onkeydown(e) {
     }
 }
 
+
 var badart = {
     body: null,
     gallery: null,
+    open: null,
     art: null,
     caption: null,
     entry: null,
@@ -211,6 +224,7 @@ puzzle_init = function() {
 
     badart.body = goog.dom.getElement("puzz");
     badart.gallery = goog.dom.getElement("gallery");
+    badart.open = goog.dom.getElement("open");
     badart.art = goog.dom.getElement("art");
     badart.caption = goog.dom.getElement("caption");
     badart.entry = goog.dom.getElement("entry");
@@ -229,6 +243,9 @@ puzzle_init = function() {
     goog.events.listen(goog.dom.getElement("artsubmit"),
 		       goog.events.EventType.CLICK,
 		       badart_submit);
+    goog.events.listen(badart.open,
+		       goog.events.EventType.CLICK,
+		       goog.bind(goog.net.XhrIo.send, null, "/artopen"));
 
     badart.waiter = new BadArtWaiter(new BadArtDispatcher());
     badart.waiter.start();

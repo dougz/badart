@@ -84,6 +84,7 @@ class GameState:
     self.running = False
     self.cond = asyncio.Condition()
     self.current_painting = None
+    self.open_requested = False
 
   async def on_wait(self, session):
     async with self.cond:
@@ -92,18 +93,19 @@ class GameState:
         self.cond.notify_all()
 
   async def run_game(self):
-    while len(self.sessions) < self.options.min_players:
+    while not self.open_requested:
       count = len(self.sessions)
       text = (f"{count} player{' is' if count == 1 else 's are'} currently waiting.<br>"
-              f"The gallery will open when there are {self.options.min_players}.")
-      await self.team.send_messages([{"method": "show_message", "text": text,}],
-                                    sticky=1)
+              f"You can enter the gallery when there are {self.options.min_players}.")
+
+      if len(self.sessions) < self.options.min_players:
+        msg = {"method": "show_message", "text": text}
+      else:
+        msg = {"method": "prompt_open", "text": text}
+
+      await self.team.send_messages([msg], sticky=1)
       async with self.cond:
         await self.cond.wait()
-
-    await self.team.send_messages([{"method": "show_message",
-                                    "text": "The gallery is opening\u2026"}])
-    await asyncio.sleep(1.5)
 
     now = time.time()
     close_time = now + self.INITIAL_OPENING_TIME
@@ -182,6 +184,11 @@ class GameState:
         self.current_painting.solved = True
         self.cond.notify_all()
 
+  async def request_open(self):
+    async with self.cond:
+      self.open_requested = True
+      self.cond.notify_all()
+
 
 class BadArtApp(scrum.ScrumApp):
   async def on_wait(self, team, session):
@@ -223,6 +230,15 @@ class SubmitHandler(tornado.web.RequestHandler):
     await gs.send_chat(f"{who} guessed \"{submission}\"")
     await gs.try_answer(answer)
 
+    self.set_status(http.client.NO_CONTENT.value)
+
+
+class OpenHandler(tornado.web.RequestHandler):
+  async def get(self):
+    scrum_app = self.application.settings["scrum_app"]
+    team, session = await scrum_app.check_cookie(self)
+    gs = GameState.get_for_team(team)
+    await gs.request_open()
     self.set_status(http.client.NO_CONTENT.value)
 
 
@@ -290,6 +306,7 @@ def make_app(options):
 
   handlers = [
     (r"/artsubmit", SubmitHandler),
+    (r"/artopen", OpenHandler),
     (r"/artdebug/(\S+)", DebugHandler),
   ]
 
