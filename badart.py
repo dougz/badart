@@ -85,6 +85,7 @@ class GameState:
     self.cond = asyncio.Condition()
     self.current_painting = None
     self.open_requested = False
+    self.solved = set()
 
   async def on_wait(self, session):
     async with self.cond:
@@ -118,7 +119,7 @@ class GameState:
         self.current_painting = p
         while True:
           next_painting = True
-          if p.solved:
+          if p in self.solved:
             to_show = p.images[-1:]
           else:
             to_show = p.images
@@ -143,7 +144,7 @@ class GameState:
             }
             if close_time:
               d["end_time"] = close_time
-            if p.solved:
+            if p in self.solved:
               d["title"] = p.title
 
             if just_solved:
@@ -156,13 +157,13 @@ class GameState:
 
             delay = self.LAST_SECS if i.last else self.FRAME_SECS
             async with self.cond:
-              was_solved = p.solved
+              was_solved = p in self.solved
               try:
                 await asyncio.wait_for(self.cond.wait(), delay)
               except asyncio.TimeoutError:
                 pass    # next image in current painting
               else:
-                if p.solved and not was_solved:
+                if p in self.solved and not was_solved:
                   # restart current painting to show solved state
                   just_solved = True
                   next_painting = False
@@ -179,9 +180,9 @@ class GameState:
 
   async def try_answer(self, answer):
     async with self.cond:
-      if (not self.current_painting.solved and
+      if (not self.current_painting in self.solved and
           answer in self.current_painting.answers):
-        self.current_painting.solved = True
+        self.solved.add(self.current_painting)
         self.cond.notify_all()
 
   async def request_open(self):
