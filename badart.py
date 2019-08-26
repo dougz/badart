@@ -256,7 +256,7 @@ def make_app(options):
   Painting.set_options(options)
 
   paintings = [
-    Painting("Bad Fountain", {"FOUNTAIN"}, "01"),
+    Painting("Bad Flag (Moratorium)", {"FLAGMORATORIUM"}, "01"),
     Painting("Bad Irises", {"IRISES"}, "02"),
     Painting("Bad Nighthawks", {"NIGHTHAWKS"}, "03"),
     Painting("Bad Guernica", {"GUERNICA"}, "04"),
