@@ -8,7 +8,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--debug", action="store_true")
 options = parser.parse_args()
 
-with zipfile.ZipFile("badart.zip", mode="w") as z:
+with zipfile.ZipFile("gallery_of_tomorrow.zip", mode="w") as z:
   with z.open("puzzle.html", "w") as f_out:
     with open("badart.html", "rb") as f_in:
 

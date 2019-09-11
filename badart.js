@@ -10,8 +10,6 @@ class BadArtWaiter {
     constructor(dispatcher) {
 	/** @type{goog.net.XhrIo} */
 	this.xhr = new goog.net.XhrIo();
-	/** @type{goog.net.XhrIo} */
-	this.other_xhr = new goog.net.XhrIo();
 	/** @type{number} */
 	this.serial = 0;
 	/** @type{number} */
@@ -49,15 +47,14 @@ class BadArtWaiter {
 	    this.dispatcher.dispatch(msg);
 	}
 
-        var temp = this.xhr;
-        this.xhr = this.other_xhr;
-        this.other_xhr = temp;
-        this.xhr.send("/artwait/" + waiter_id + "/" + this.serial);
+        setTimeout(goog.bind(this.xhr.send, this.xhr,
+			     "/artwait/" + waiter_id + "/" + this.serial),
+		   Math.random() * 250);
     }
 
     start() {
-	goog.events.listen(this.xhr, goog.net.EventType.COMPLETE, this.waitcomplete, false, this);
-	goog.events.listen(this.other_xhr, goog.net.EventType.COMPLETE, this.waitcomplete, false, this);
+	goog.events.listen(this.xhr, goog.net.EventType.COMPLETE,
+			   goog.bind(this.waitcomplete, this));
 	this.xhr.send("/artwait/" + waiter_id + "/" + this.serial);
     }
 }
@@ -99,6 +96,7 @@ class BadArtDispatcher {
 
     /** @param{Message} msg */
     dispatch(msg) {
+	console.log(msg);
 	this.methods[msg.method](msg);
     }
 
@@ -141,12 +139,14 @@ class BadArtDispatcher {
 	badart.message.style.display = "none";
 	badart.open.style.display = "none";
 	if (msg.title) {
+	    console.log("adding frame");
 	    goog.dom.classlist.add(badart.art, "framed");
 	    badart.caption.style.display = "flex";
 	    badart.entry.style.display = "none";
 	    badart.title.innerHTML = msg.title;
 	    badart.text.value = "";
 	} else {
+	    console.log("showing entry " + badart.entry);
 	    goog.dom.classlist.remove(badart.art, "framed");
 	    badart.caption.style.display = "none";
 	    badart.entry.style.display = "flex";
