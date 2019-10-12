@@ -87,6 +87,13 @@ class GameState:
     self.open_requested = False
     self.solved = set()
 
+    if self.options.min_players is not None:
+      self.min_size = self.options.min_players
+    else:
+      self.min_size = (team.size + 1) // 2
+      if self.min_size > 20:
+        self.min_size = 20
+
   async def on_wait(self, session):
     async with self.cond:
       if session not in self.sessions:
@@ -97,9 +104,9 @@ class GameState:
     while not self.open_requested:
       count = len(self.sessions)
       text = (f"{count} player{' is' if count == 1 else 's are'} currently waiting.<br>"
-              f"You can enter the gallery when there are {self.options.min_players}.")
+              f"You can enter the gallery when there are {self.min_size}.")
 
-      if len(self.sessions) < self.options.min_players:
+      if len(self.sessions) < self.min_size:
         msg = {"method": "show_message", "text": text}
       else:
         msg = {"method": "prompt_open", "text": text}
@@ -329,7 +336,7 @@ def main():
                       help="Path for wait requests from frontend.")
   parser.add_argument("--main_server_port", type=int, default=2020,
                       help="Port to use for requests to main server.")
-  parser.add_argument("--min_players", type=int, default=1,
+  parser.add_argument("--min_players", type=int, default=None,
                       help="Number of players needed to start game.")
 
   options = parser.parse_args()
