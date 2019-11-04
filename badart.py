@@ -199,7 +199,7 @@ class GameState:
 
 
 class BadArtApp(scrum.ScrumApp):
-  async def on_wait(self, team, session):
+  async def on_wait(self, team, session, wid):
     gs = GameState.get_for_team(team)
 
     if not gs.running:
@@ -330,8 +330,8 @@ def main():
   parser.add_argument("-c", "--cookie_secret",
                       default="snellen2020",
                       help="Secret used to create session cookies.")
-  parser.add_argument("--socket_path", default="/tmp/badart",
-                      help="Socket for requests from frontend.")
+  parser.add_argument("--listen_port", type=int, default=2002,
+                      help="Port requests from frontend.")
   parser.add_argument("--wait_url", default="artwait",
                       help="Path for wait requests from frontend.")
   parser.add_argument("--main_server_port", type=int, default=2020,
