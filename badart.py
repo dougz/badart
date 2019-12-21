@@ -90,7 +90,7 @@ class GameState:
     if self.options.min_players is not None:
       self.min_size = self.options.min_players
     else:
-      self.min_size = (team.size + 1) // 2
+      self.min_size = (team.size + 1) // 4
       if self.min_size > 20:
         self.min_size = 20
 
