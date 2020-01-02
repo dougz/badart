@@ -27,5 +27,7 @@ class Message {
 	this.title;
 	/** @type{?string} */
 	this.url;
+	/** @type{?string} */
+	this.players;
     }
 }

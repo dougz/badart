@@ -38,6 +38,7 @@ class BadArtDispatcher {
 	    "show_image": this.show_image,
 	    "play_audio": this.play_audio,
 	    "add_chat": this.add_chat,
+            "players": this.players,
 	}
     }
 
@@ -68,6 +69,12 @@ class BadArtDispatcher {
 	badart.entry.style.display = "none";
 	badart.message.style.display = "block";
 	badart.message.innerHTML = msg.text;
+    }
+
+    /** @param{Message} msg */
+    players(msg) {
+        var el = goog.dom.getElement("players");
+        el.innerHTML = "<b>Players:</b> " + msg.players;
     }
 
     /** @param{Message} msg */
@@ -115,7 +122,8 @@ class BadArtDispatcher {
 	if (curr.length > 3) {
 	    goog.dom.removeNode(curr[0]);
 	}
-	var el = goog.dom.createDom("P", null, msg.text);
+	var el = goog.dom.createDom("P");
+        el.innerHTML = msg.text;
 	badart.chat.appendChild(el);
     }
 }
@@ -127,12 +135,7 @@ function badart_submit(e) {
     var username = badart.who.value;
     localStorage.setItem("name", username);
     var msg = badart.serializer.serialize({"answer": answer, "who": username});
-    goog.net.XhrIo.send("/artsubmit", function(e) {
-	var code = e.target.getStatus();
-	if (code != 204) {
-	    alert(e.target.getResponseText());
-	}
-    }, "POST", msg);
+    goog.net.XhrIo.send("/artsubmit", Common_expect_204, "POST", msg);
     e.preventDefault();
 }
 
@@ -143,6 +146,14 @@ function badart_onkeydown(e) {
     }
 }
 
+function badart_send_name() {
+    var name = badart.who.value;
+    if (name != badart.sent_name) {
+        badart.sent_name = name;
+        var msg = badart.serializer.serialize({"who": name});
+        goog.net.XhrIo.send("/artname", Common_expect_204, "POST", msg);
+    }
+}
 
 var badart = {
     body: null,
@@ -161,6 +172,7 @@ var badart = {
     countdown_span: null,
     countdown: null,
     serializer: null,
+    sent_name: null,
 }
 
 puzzle_init = function() {
@@ -193,5 +205,7 @@ puzzle_init = function() {
 
     badart.waiter = new Common_Waiter(new BadArtDispatcher(), "/artwait", 0, null, null);
     badart.waiter.start();
+
+    setInterval(badart_send_name, 1000);
 }
 
